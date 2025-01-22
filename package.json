@@ -1,0 +1,17 @@
+{
+  "name": "photo-gallery",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Photo Gallery for IIT Mandi",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch --env-file=.env ./src/index.js",
+    "start": "node ./src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}
