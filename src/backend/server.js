@@ -2,6 +2,10 @@ import express from 'express';
 import path from 'path';
 import cors from 'cors';
 
+import logger from './middleware/logger.js';
+import auth from './middleware/auth.js';
+import notFound from './middleware/notFound.js';
+import errorHandler from './middleware/error.js'
 import { connectDB } from './helpers/mongoose.js';
 import imageRoutes from './routes/imageUpload.js';
 
@@ -20,11 +24,11 @@ connectDB();
 app.use(logger);
 app.use(auth);
 
+// routes
+app.use('/api/images', imageRoutes);
+
 // Error handler
 app.use(notFound);
 app.use(errorHandler);
-
-// routes
-app.use('/api/images', imageRoutes);
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));

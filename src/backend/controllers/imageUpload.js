@@ -1,5 +1,8 @@
 import multer from 'multer';
 import axios from 'axios';
+import FormData from 'form-data';
+
+import { fileModel } from '../helpers/mongoose.js';
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage }).array('files');
@@ -19,15 +22,26 @@ export const uploadImages = (req, res) => {
 
       for (const file of req.files) {
         const formData = new FormData();
-        formData.append('file', file.buffer, file.originalname);
+        const date = Date.now();
+        formData.append('file', file.buffer, `${date}-${file.originalname}`);
 
-        const response = await axios.post(PROCESS.env.SEAWEEDFS_URL, formData, {
+        const response = await axios.post(process.env.SEAWEEDFS_URL, formData, {
           headers: formData.getHeaders(),
         });
 
         uploadedFiles.push({
-          filename: file.originalname,
+          filename: `${date}-${file.originalname}`,
           fileId: response.data.fid});
+
+        const newFile = new fileModel({
+          fileId: response.data.fid,
+          fileName: file.originalname,
+          uploader: req.body.uploaderName || 'unknown',
+          event: req.body.event || '',
+          uploaderEmail: req.body.userEmail || 'unknown',
+          uploadedAt: date,
+        });
+        await newFile.save();
       }
 
       return res.status(200).json({
