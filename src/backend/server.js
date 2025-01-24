@@ -1,12 +1,15 @@
 import express from 'express';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import cors from 'cors';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const port = process.env.PORT || 5000;
+import logger from './middleware/logger.js';
+import auth from './middleware/auth.js';
+import notFound from './middleware/notFound.js';
+import errorHandler from './middleware/error.js'
+import { connectDB } from './helpers/mongoose.js';
+import imageRoutes from './routes/imageUpload.js';
 
+const port = process.env.PORT || 5000;
 const app = express();
 
 // Body parser middleware
@@ -14,9 +17,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// connecting mongodb
+connectDB();
+
 // Logging middleware
 app.use(logger);
 app.use(auth);
+
+// routes
+app.use('/api/images', imageRoutes);
 
 // Error handler
 app.use(notFound);

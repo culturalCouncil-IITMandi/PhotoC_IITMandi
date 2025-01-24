@@ -1,9 +1,13 @@
 import mongoose from "mongoose";
 
 const imageSchema = new mongoose.Schema({
-    filePath: { // path of file on the machine
+    fileName: { // id of the file
         type: String, 
         required: true 
+    },
+    fileId: {
+        type: String,
+        required: true
     },
     uploadedAt: { // uploaded data
         type: Date, 
@@ -25,7 +29,7 @@ const imageSchema = new mongoose.Schema({
         default: false 
     }
 });
-export const file = mongoose.model("Image", fileSchema);
+export const fileModel = mongoose.model("Image", imageSchema);
 
 export const connectDB = async () => { // connecting with mongodb
     try {
