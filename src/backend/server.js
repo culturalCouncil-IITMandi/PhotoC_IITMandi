@@ -8,6 +8,9 @@ import notFound from './middleware/notFound.js';
 import errorHandler from './middleware/error.js'
 import { connectDB } from './helpers/mongoose.js';
 import imageRoutes from './routes/imageUpload.js';
+import userLoginRoutes from './routes/user.js'
+
+import { initFirebase } from './controllers/user.js';
 
 const port = process.env.PORT || 5000;
 const app = express();
@@ -19,6 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // connecting mongodb
 connectDB();
+initFirebase();
 
 // generating new API token
 import { generateToken } from './helpers/jwtToken.js';
@@ -30,6 +34,7 @@ app.use(auth);
 
 // routes
 app.use('/api/images', imageRoutes);
+app.use('/api/user', userLoginRoutes);
 
 // Error handler
 app.use(notFound);
