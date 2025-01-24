@@ -20,6 +20,10 @@ app.use(express.urlencoded({ extended: false }));
 // connecting mongodb
 connectDB();
 
+// generating new API token
+import { generateToken } from './helpers/jwtToken.js';
+console.log(generateToken({ id: 1, email: 'divyansh.bt@gmail.com'}))
+
 // Logging middleware
 app.use(logger);
 app.use(auth);
