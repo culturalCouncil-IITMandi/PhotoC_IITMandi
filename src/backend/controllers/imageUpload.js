@@ -25,7 +25,7 @@ export const uploadImages = (req, res) => {
         const date = Date.now();
         formData.append('file', file.buffer, `${date}-${file.originalname}`);
 
-        const response = await axios.post(process.env.SEAWEEDFS_URL, formData, {
+        const response = await axios.post(`${process.env.SEAWEEDFS_URL} submit`, formData, {
           headers: formData.getHeaders(),
         });
 
