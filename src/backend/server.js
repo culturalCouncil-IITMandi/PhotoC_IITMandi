@@ -7,6 +7,7 @@ import auth from './middleware/auth.js';
 import notFound from './middleware/notFound.js';
 import errorHandler from './middleware/error.js'
 import { connectDB } from './helpers/mongoose.js';
+import { initFirebase } from './controllers/user.js';
 
 import imageRoutes from './routes/imageUpload.js';
 import approvalRoutes from './routes/approval.js';
@@ -23,10 +24,6 @@ app.use(express.urlencoded({ extended: false }));
 // connecting mongodb
 connectDB();
 initFirebase();
-
-// generating new API token
-import { generateToken } from './helpers/jwtToken.js';
-console.log(generateToken({ id: 1, email: 'divyansh.bt@gmail.com'}))
 
 // generating new API token
 import { generateToken } from './helpers/jwtToken.js';
