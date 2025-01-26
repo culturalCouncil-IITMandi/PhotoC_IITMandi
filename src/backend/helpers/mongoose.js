@@ -27,6 +27,10 @@ const imageSchema = new mongoose.Schema({
     approval: { // whether the image has been approved by admin
         type: Boolean, 
         default: false 
+    },
+    uploaderEmail: {
+        type: String,
+        required: true
     }
 });
 export const fileModel = mongoose.model("Image", imageSchema);
