@@ -1,6 +1,6 @@
 import express from 'express';
-import path from 'path';
 import cors from 'cors';
+import authRoutes from "./routes/authRoutes.js";
 
 import logger from './middleware/logger.js';
 import auth from './middleware/auth.js';
@@ -37,9 +37,11 @@ app.use(auth);
 app.use('/api/images', imageRoutes);
 app.use('/api/approve', approvalRoutes);
 app.use('/api/filter', imageAccessRoutes);
+app.use("/api/login", authRoutes);
 
 // Error handler
 app.use(notFound);
 app.use(errorHandler);
+
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
