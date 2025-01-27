@@ -1,9 +1,9 @@
 import express from "express";
-import { isAuthenticated } from "../middleware/firebase1.js";
+import { isAuthenticated } from "../middleware/firebase.js";
 
 const router = express.Router();
 
-router.post("/login", isAuthenticated, (req, res) => {
+router.post("/", isAuthenticated, (req, res) => {
   const { email, name, uid } = req.user;
 
   res.status(200).json({
