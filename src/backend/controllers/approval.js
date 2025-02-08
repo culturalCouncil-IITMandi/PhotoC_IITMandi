@@ -54,7 +54,7 @@ export const delApprovePost = async (req, res) => {
 // Get all approved photos
 export const getApproved = async (req, res) => {
   try {
-    const approvedPhotos = await fileModel.find({ approval: true });
+    const approvedPhotos = await fileModel.find({ approval: false });
 
     res.status(200).json(approvedPhotos);
   } catch (err) {

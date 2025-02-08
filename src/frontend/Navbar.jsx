@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom"; // Import Link for navigation
 import "./Navbar.css";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import Approval from './pages/approval.jsx'
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 
-// Firebase config (Replace with your Firebase project config)
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCkohhYNR0SuASC_jTNoRHDNW3EcoLPghE",
   authDomain: "photo-gallery-iitmd.firebaseapp.com",
@@ -20,38 +22,65 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 const Navbar = () => {
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
+
   const handleAuth = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken();
-      
-      const response = await fetch("https://localhost:5000/api/login", {
+
+      const response = await fetch("http://localhost:5000/api/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-API-KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJkaXZ5YW5zaC5idEBnbWFpbC5jb20iLCJpYXQiOjE3MzkwMDI1NDl9.6zIq45jgf83LAWn5RmYjA69QPAyXT1khsHQIy7eiJLU",
+          "X-API-KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJkaXZ5YW5zaC5idEBnbWFpbC5jb20iLCJpYXQiOjE3MzkwMDc3NjV9.4PySBx5wIqC5QMp8s67NaS3tF705uuuPbaj9xs45HjA",
         },
         body: JSON.stringify({ idToken }),
+        mode: "cors",
       });
-      
+
+      if (!response.ok) {
+        console.error(`Authentication failed: ${response.status} - ${response.statusText}`);
+        return;
+      }
+
       const data = await response.json();
       console.log("Auth Response:", data);
+
+      setUser(data);
     } catch (error) {
       console.error("Error during authentication:", error);
+      setError("An error occurred during authentication. Please try again.");
     }
+  };
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => setUser(null))
+      .catch((error) => console.error("Logout Error:", error));
   };
 
   return (
     <nav className="navbar">
       <div className="navbar-logo">PhotoGallery</div>
       <ul className="navbar-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Categories</a></li>
-        <li><a href="#">About</a></li>
+        <li><Link to="/">Home</Link></li>
+        <li><Link to="#">Categories</Link></li>
+        <li><Link to="#">About</Link></li>
+        {user?.admin1 && <li><Link to="/approval">Approval</Link></li>}
       </ul>
       <div className="navbar-buttons">
-        <button className="auth-btn" onClick={handleAuth}>Login/Register</button>
+        {user ? (
+          <div className="user-profile">
+            <img src={user.picture || "default-avatar.png"} alt="Profile" className="user-pfp" />
+            <button className="logout-btn" onClick={handleLogout}>Logout</button>
+          </div>
+        ) : (
+          <button className="auth-btn" onClick={handleAuth}>Login/Register</button>
+        )}
       </div>
+      {error && <div className="error-message">{error}</div>}
     </nav>
   );
 };

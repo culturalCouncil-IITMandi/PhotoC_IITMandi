@@ -23,12 +23,14 @@ export const userLogin = async (req, res) => {
         return res.status(403).json({ message: 'Access denied: Unauthorized email domain' });
       }
       console.log(`User authenticated: ${email} (UID: ${uid})`);
+      const admin1 = email === 'b24121@students.iitmandi.ac.in';
       res.json({
         message: 'Login successful',
         uid,
         email,
         name,
         picture,
+        admin1,
       });
     } catch (error) {
       console.error('Error verifying ID token:', error);
