@@ -20,6 +20,7 @@
 
 
 
+
 /* Each filter group */
 .filter-group {
   display: flex;
@@ -45,7 +46,7 @@
   width: 160px;
   font-size: 14px;
   background: rgba(255, 255, 255, 0.1); /* Slightly transparent background */
-  color: white;
+  color: black;
 }
 
 .filter-input::placeholder {

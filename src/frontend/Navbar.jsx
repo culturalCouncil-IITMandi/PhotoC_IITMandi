@@ -1,19 +1,18 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "./Navbar.css";
-import Approval from './pages/approval.jsx'
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 
-// Firebase config
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCkohhYNR0SuASC_jTNoRHDNW3EcoLPghE",
   authDomain: "photo-gallery-iitmd.firebaseapp.com",
   projectId: "photo-gallery-iitmd",
-  storageBucket: "photo-gallery-iitmd.firebasestorage.app",
+  storageBucket: "photo-gallery-iitmd.appspot.com",
   messagingSenderId: "163087163057",
   appId: "1:163087163057:web:f9a8d5c9e4e284c0958c90",
-  measurementId: "G-ML0G3WHGCW"
+  measurementId: "G-ML0G3WHGCW",
 };
 
 // Initialize Firebase
@@ -24,6 +23,18 @@ const provider = new GoogleAuthProvider();
 const Navbar = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleAuth = async () => {
     try {
@@ -46,8 +57,6 @@ const Navbar = () => {
       }
 
       const data = await response.json();
-      console.log("Auth Response:", data);
-
       setUser(data);
     } catch (error) {
       console.error("Error during authentication:", error);
@@ -66,8 +75,9 @@ const Navbar = () => {
       <div className="navbar-logo">PhotoGallery</div>
       <ul className="navbar-links">
         <li><Link to="/">Home</Link></li>
-        <li><Link to="#">Categories</Link></li>
-        <li><Link to="#">About</Link></li>
+        <li><Link to="/gallery">Gallery</Link></li>
+        <li><Link to="/about">About</Link></li>
+        <li><Link to="/upload">Upload</Link></li>
         {user?.admin1 && <li><Link to="/approval">Approval</Link></li>}
       </ul>
       <div className="navbar-buttons">
