@@ -1,0 +1,17 @@
+/* Footer styles */
+.footer {
+  background-color: rgb(43, 42, 42);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid #000;
+}
+
+.footer-text {
+  border-bottom: 2px solid black;
+  font-size: 14px;
+  color: #888484;
+}

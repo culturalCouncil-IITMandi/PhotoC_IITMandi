@@ -1,0 +1,118 @@
+/* Container layout adjustment */
+.container {
+  display: flex;
+  flex-wrap: wrap; /* Allows wrapping for smaller screens */
+  justify-content: space-between;
+  gap: 30px;
+  padding: 20px;
+}
+
+/* Box adjustments for smaller screens */
+.box {
+  flex: 1;
+  min-width: 280px; /* Prevents boxes from being too small */
+  height: 300px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+  padding: 5px;
+}
+
+/* On hover */
+.box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.box-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  padding: 2px;
+  border-radius: 10px;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0.7) 100%);
+}
+
+.box-title {
+  position: absolute;
+  bottom: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  z-index: 2;
+}
+
+/* Button styling */
+.view-album-button {
+  position: absolute;
+  bottom: 10px;
+  width: 50%;
+  height: 15%;
+  margin-bottom: 5px;
+  background-color: #228B22;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  z-index: 3;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(2px);
+}
+
+.view-album-button:hover {
+  background-color: #1c6b1c;
+  transform: scale(1.05) translateY(0);
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column; /* Stack boxes vertically */
+    gap: 20px;
+  }
+
+  .box {
+    min-width: 100%; /* Ensures each box takes full width */
+    height: 250px; /* Adjust box height */
+  }
+
+  .view-album-button {
+    width: 80%; /* Button takes more width on small screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+
+  .box {
+    height: 200px; /* Decrease height for very small screens */
+    padding: 10px;
+  }
+
+  .view-album-button {
+    width: 90%;
+    font-size: 12px;
+  }
+
+  .box-title {
+    font-size: 14px; /* Adjust title font size */
+  }
+}

@@ -6,5 +6,5 @@ export function generateToken(user) {
     email: user.email,
   };
 
-  return jwt.sign(payload, process.env.JWT_TOKEN, { expiresIn: '30d' });
+  return jwt.sign(payload, process.env.JWT_TOKEN);
 }
