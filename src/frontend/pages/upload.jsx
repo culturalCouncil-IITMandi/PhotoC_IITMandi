@@ -2,26 +2,38 @@ import { useState } from "react";
 import "./upload.css";
 
 export default function Upload() {
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState([]);
 
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      console.log("Selected file:", file); // Debugging
-      setImage(URL.createObjectURL(file)); // Generate preview
-    } else {
-      console.log("No file selected.");
+    const files = Array.from(event.target.files);
+    const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+    
+    if (imageFiles.length) {
+      const imageNames = imageFiles.map((file) => file.name);
+      setImages((prevImages) => [...prevImages, ...imageNames]); // Append new image names
     }
+  };
+
+  const removeImage = (index) => {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   return (
     <div className="upload-container">
-      <h1 className="upload-heading">Upload Image</h1>
+      <h1 className="upload-heading">Upload Images</h1>
 
       {/* Upload Box */}
       <label className="upload-box">
-        {image ? (
-          <img src={image} alt="Uploaded" className="uploaded-image" />
+        {images.length > 0 ? (
+          <div className="image-preview-container">
+            <ul>
+              {images.map((name, index) => (
+                <li key={index} className="uploaded-image-name">
+                  {name} <button onClick={() => removeImage(index)} className="remove-button">Remove</button>
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : (
           <>
             <div className="upload-icon">+</div>
@@ -31,6 +43,7 @@ export default function Upload() {
         <input
           type="file"
           accept="image/*"
+          multiple
           onChange={handleFileChange}
           className="upload-input"
         />
