@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Redirect non-admins
+import { useNavigate } from "react-router-dom";
 import "./PhotoGrid.css";
 import tick from "./assets/tick.jpg";
 import cross from "./assets/cross.jpg";
@@ -8,17 +8,16 @@ import eye from "./assets/eye.jpg";
 const PhotoGrid = () => {
   const [photos, setPhotos] = useState([]);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(null); // Default to null to avoid flicker
+  const [isAdmin, setIsAdmin] = useState(null);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // For redirecting users
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Read from localStorage synchronously
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
         const user = JSON.parse(storedUser);
-        setIsAdmin(user.admin1 === true); // Ensure it's a boolean
+        setIsAdmin(user.admin1 === true);
       } catch (e) {
         console.error("Error parsing user data:", e);
         setIsAdmin(false);
@@ -38,11 +37,11 @@ const PhotoGrid = () => {
 
   const fetchPhotos = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/approve", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/approve`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "X-API-KEY": "your_api_key_here",
+          "X-API-KEY": import.meta.env.VITE_X_API_KEY,
         },
       });
 
@@ -58,14 +57,14 @@ const PhotoGrid = () => {
   };
 
   const handleApprove = async (fileId) => {
-    if (!isAdmin) return; // Failsafe
+    if (!isAdmin) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/approve/${fileId}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/approve/${fileId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-API-KEY": "your_api_key_here",
+          "X-API-KEY": import.meta.env.VITE_X_API_KEY,
         },
       });
 
@@ -80,14 +79,14 @@ const PhotoGrid = () => {
   };
 
   const handleReject = async (fileId) => {
-    if (!isAdmin) return; // Failsafe
+    if (!isAdmin) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/approve/${fileId}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/approve/${fileId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          "X-API-KEY": "your_api_key_here",
+          "X-API-KEY": import.meta.env.VITE_X_API_KEY,
         },
       });
 
@@ -101,7 +100,6 @@ const PhotoGrid = () => {
     }
   };
 
-  // Prevent rendering anything until isAdmin is determined
   if (isAdmin === null) return <div>Loading...</div>;
 
   if (!isAdmin) {
@@ -124,15 +122,10 @@ const PhotoGrid = () => {
             </button>
 
             <img
-              src={`http://localhost:9333/${photo.fileId}`}
+              src={`${import.meta.env.VITE_SEAWEEDFS_URL}/${photo.fileId}`}
               alt={photo.fileName}
               className="photo"
             />
-
-            {/* <div className="photo-details">
-              <p><strong>Uploader:</strong> {photo.uploader}</p>
-              <p><strong>Uploaded on:</strong> {new Date(photo.uploadedAt).toLocaleDateString()}</p>
-            </div> */}
 
             <div className="photo-actions">
               <button onClick={() => handleApprove(photo.fileId)} disabled={!isAdmin}>
@@ -150,11 +143,10 @@ const PhotoGrid = () => {
         <div className="modal">
           <div className="modal-content">
             <button className="close-button" onClick={() => setSelectedPhoto(null)}>&times;</button>
-            <img src={`http://localhost:9333/${selectedPhoto.fileId}`} alt={selectedPhoto.fileName} className="modal-photo" />
+            <img src={`${import.meta.env.VITE_SEAWEEDFS_URL}/${selectedPhoto.fileId}`} alt={selectedPhoto.fileName} className="modal-photo" />
             <p><strong>Uploader:</strong> {selectedPhoto.uploader}</p>
             <p><strong>Email:</strong> {selectedPhoto.uploaderEmail}</p>
             <p><strong>Uploaded on:</strong> {new Date(selectedPhoto.uploadedAt).toLocaleDateString()}</p>
-            <p><strong>Likes:</strong> {selectedPhoto.likes}</p>
             <p className={selectedPhoto.approval ? "approved" : "pending"}>
               {selectedPhoto.approval ? "Approved" : "Pending"}
             </p>

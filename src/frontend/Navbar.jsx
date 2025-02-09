@@ -4,15 +4,15 @@ import "./Navbar.css";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 
-// Firebase Config
+// Firebase Config from .env
 const firebaseConfig = {
-  apiKey: "AIzaSyCkohhYNR0SuASC_jTNoRHDNW3EcoLPghE",
-  authDomain: "photo-gallery-iitmd.firebaseapp.com",
-  projectId: "photo-gallery-iitmd",
-  storageBucket: "photo-gallery-iitmd.appspot.com",
-  messagingSenderId: "163087163057",
-  appId: "1:163087163057:web:f9a8d5c9e4e284c0958c90",
-  measurementId: "G-ML0G3WHGCW",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
@@ -45,11 +45,11 @@ const Navbar = () => {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken();
 
-      const response = await fetch("http://localhost:5000/api/user/login", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-API-KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJkaXZ5YW5zaC5idEBnbWFpbC5jb20iLCJpYXQiOjE3MzkwMDc3NjV9.4PySBx5wIqC5QMp8s67NaS3tF705uuuPbaj9xs45HjA",
+          "X-API-KEY": import.meta.env.VITE_X_API_KEY,
         },
         body: JSON.stringify({ idToken }),
         mode: "cors",
@@ -62,9 +62,7 @@ const Navbar = () => {
       }
 
       const data = await response.json();
-      console.log(result.user);
       const userData = {
-        uid: result.user.uid,
         email: result.user.email,
         name: result.user.displayName,
         picture: result.user.photoURL,
@@ -94,7 +92,7 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <div className="navbar-logo">PhotoGallery</div>
+      <Link to="/" className="navbar-logo">PhotoGallery</Link>
       <ul className="navbar-links">
         <li><Link to="/">Home</Link></li>
         <li><Link to="/gallery">Gallery</Link></li>

@@ -9,10 +9,11 @@ const Gallery = () => {
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/filter?approved=true", {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/filter?approved=true`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            "X-API-KEY": import.meta.env.VITE_X_API_KEY,
           },
         });
 
@@ -41,10 +42,11 @@ const Gallery = () => {
     const userId = JSON.parse(storedUser).email; // Parse the stored string
 
     try {
-      const response = await fetch(`http://localhost:5000/api/images/like/${photoId}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/images/like/${photoId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "X-API-KEY": import.meta.env.VITE_X_API_KEY,
         },
         body: JSON.stringify({ userId }),
       });

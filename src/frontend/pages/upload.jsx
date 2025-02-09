@@ -57,8 +57,11 @@ export default function Upload() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/images/upload", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/images/upload`, {
         method: "POST",
+        headers: {
+          "X-API-KEY": import.meta.env.VITE_X_API_KEY,
+        },
         body: formData,
       });
 
