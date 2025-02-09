@@ -9,6 +9,7 @@ const upload = multer({ storage }).array('files');
 
 // Upload files to SeaweedFS function
 export const uploadImages = (req, res) => {
+  console.log(req);
   upload(req, res, async (err) => {
     if (err) {
       return res.status(500).json({ message: 'File upload failed', error: err.message });
@@ -25,7 +26,7 @@ export const uploadImages = (req, res) => {
         const date = Date.now();
         formData.append('file', file.buffer, `${date}-${file.originalname}`);
 
-        const response = await axios.post(`${process.env.SEAWEEDFS_URL} submit`, formData, {
+        const response = await axios.post(`${process.env.SEAWEEDFS_URL}submit`, formData, {
           headers: formData.getHeaders(),
         });
 
@@ -40,6 +41,9 @@ export const uploadImages = (req, res) => {
           event: req.body.event || '',
           uploaderEmail: req.body.userEmail || 'unknown',
           uploadedAt: date,
+          approval: req.body.approved === 'true',
+          description: req.body.description,
+          title: req.body.title,
         });
         await newFile.save();
       }

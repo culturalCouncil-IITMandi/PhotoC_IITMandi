@@ -1,11 +1,12 @@
 import { fileModel } from '../helpers/mongoose.js';
+import fetch from "node-fetch";
 
 // Approve a photo by ID
 export const approvePost = async (req, res) => {
   try {
-    const { fileId } = req.params;
-
-    const photo = await fileModel.findOne(fileId);
+    const { id } = req.params;
+    console.log(req.params)
+    const photo = await fileModel.findOne( { fileId: id } );
     if (!photo) {
       return res.status(404).json({ message: "Photo not found" });
     }
@@ -26,26 +27,32 @@ export const approvePost = async (req, res) => {
   }
 };
 
-// Reject (or unapprove) a photo by ID
+
 export const delApprovePost = async (req, res) => {
   try {
-    const { fileId } = req.params;
+    const { id } = req.params;
 
-    const photo = await fileModel.findOne(fileId);
+    // Find the photo in MongoDB
+    const photo = await fileModel.findOne({ fileId: id });
     if (!photo) {
       return res.status(404).json({ message: "Photo not found" });
     }
 
-    photo.approval = false;
-    const updatedPhoto = await photo.save();
+    // Delete the file from SeaweedFS
+    const seaweedDeleteUrl = `http://localhost:9333/${id}`;
+    const seaweedResponse = await fetch(seaweedDeleteUrl, { method: "DELETE" });
 
-    res.json({
-      message: "Photo rejected successfully",
-      photo: updatedPhoto,
-    });
+    if (!seaweedResponse.ok) {
+      return res.status(500).json({ message: "Failed to delete from SeaweedFS" });
+    }
+
+    // Remove the photo from MongoDB
+    await fileModel.deleteOne({ fileId: id });
+
+    res.json({ message: "Photo deleted successfully" });
   } catch (err) {
     res.status(500).json({
-      message: "Error rejecting photo",
+      message: "Error deleting photo",
       error: err.message,
     });
   }

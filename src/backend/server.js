@@ -32,7 +32,7 @@ console.log(generateToken({ id: 1, email: 'divyansh.bt@gmail.com'}))
 
 // Logging middleware
 app.use(logger);
-app.use(auth);
+// app.use(auth);
 
 // routes
 app.use('/api/images', imageRoutes);

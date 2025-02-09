@@ -28,10 +28,17 @@ const imageSchema = new mongoose.Schema({
         type: Boolean, 
         default: false 
     },
+    title: { // title of the image
+        type: String, 
+    },
+    description: { // description of the image
+        type: String 
+    },
     uploaderEmail: {
         type: String,
         required: true
-    }
+    },
+    likedBy: { type: [String], default: [] }, // Stores user IDs who liked the photo
 });
 export const fileModel = mongoose.model("Image", imageSchema);
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "./PhotoGrid.css"; // Your custom CSS file
+import { useNavigate } from "react-router-dom"; // Redirect non-admins
+import "./PhotoGrid.css";
 import tick from "./assets/tick.jpg";
 import cross from "./assets/cross.jpg";
 import eye from "./assets/eye.jpg";
@@ -7,78 +8,137 @@ import eye from "./assets/eye.jpg";
 const PhotoGrid = () => {
   const [photos, setPhotos] = useState([]);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
-  const [selectedPhotos, setSelectedPhotos] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(null); // Default to null to avoid flicker
+  const [error, setError] = useState(null);
+  const navigate = useNavigate(); // For redirecting users
 
   useEffect(() => {
-    const fetchPhotos = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/api/approve', {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                "X-API-KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJkaXZ5YW5zaC5idEBnbWFpbC5jb20iLCJpYXQiOjE3MzkwMTA3MTZ9.jft2e1tSv41I1KwXrS2dXMyYH02T8LfwlvBs1uol7aY", // Add API key here
-              },
-            });
-    
-            if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-    
-            const data = await response.json();
-            setPhotos(data);
-          } catch (error) {
-            console.error("Error fetching photos:", error);
-          }
-        };
-
-    fetchPhotos();
+    // Read from localStorage synchronously
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        setIsAdmin(user.admin1 === true); // Ensure it's a boolean
+      } catch (e) {
+        console.error("Error parsing user data:", e);
+        setIsAdmin(false);
+      }
+    } else {
+      setIsAdmin(false);
+    }
   }, []);
 
-  const toggleSelectPhoto = (fileId) => {
-    setSelectedPhotos((prev) =>
-      prev.includes(fileId) ? prev.filter((id) => id !== fileId) : [...prev, fileId]
+  useEffect(() => {
+    if (isAdmin === false) {
+      setError("You do not have permission to access this page.");
+    } else if (isAdmin === true) {
+      fetchPhotos();
+    }
+  }, [isAdmin]);
+
+  const fetchPhotos = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/approve", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": "your_api_key_here",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setPhotos(data);
+    } catch (error) {
+      console.error("Error fetching photos:", error);
+    }
+  };
+
+  const handleApprove = async (fileId) => {
+    if (!isAdmin) return; // Failsafe
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/approve/${fileId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": "your_api_key_here",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      fetchPhotos();
+    } catch (error) {
+      console.error("Error approving photo:", error);
+    }
+  };
+
+  const handleReject = async (fileId) => {
+    if (!isAdmin) return; // Failsafe
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/approve/${fileId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": "your_api_key_here",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      fetchPhotos();
+    } catch (error) {
+      console.error("Error rejecting photo:", error);
+    }
+  };
+
+  // Prevent rendering anything until isAdmin is determined
+  if (isAdmin === null) return <div>Loading...</div>;
+
+  if (!isAdmin) {
+    return (
+      <div className="error-container">
+        <h2>Access Denied</h2>
+        <p>{error}</p>
+        <button onClick={() => navigate("/")}>Go to Home</button>
+      </div>
     );
-  };
-
-  const approveSelected = () => {
-    console.log(`Approved Photos: ${selectedPhotos.join(", ")}`);
-    setSelectedPhotos([]);
-  };
-
-  const rejectSelected = () => {
-    console.log(`Rejected Photos: ${selectedPhotos.join(", ")}`);
-    setSelectedPhotos([]);
-  };
+  }
 
   return (
     <div className="photo-grid-container">
       <div className="photo-grid">
         {photos.map((photo) => (
-          <div
-            key={photo.fileId}
-            className={`photo-card ${selectedPhotos.includes(photo.fileId) ? "selected" : ""}`}
-          >
+          <div key={photo.fileId} className="photo-card">
             <button className="view-button" onClick={() => setSelectedPhoto(photo)}>
               <img className="icon" src={eye} alt="View" />
             </button>
 
             <img
-              src={photo.fileId} // Make sure this is a valid URL or adjust accordingly
+              src={`http://localhost:9333/${photo.fileId}`}
               alt={photo.fileName}
               className="photo"
-              onClick={() => toggleSelectPhoto(photo.fileId)}
             />
 
-            <div className="photo-details">
+            {/* <div className="photo-details">
               <p><strong>Uploader:</strong> {photo.uploader}</p>
               <p><strong>Uploaded on:</strong> {new Date(photo.uploadedAt).toLocaleDateString()}</p>
-            </div>
+            </div> */}
 
             <div className="photo-actions">
-              <button onClick={() => console.log(`Approved ${photo.fileId}`)}>
+              <button onClick={() => handleApprove(photo.fileId)} disabled={!isAdmin}>
                 <img className="icon" src={tick} alt="Approve" />
               </button>
-              <button onClick={() => console.log(`Rejected ${photo.fileId}`)}>
+              <button onClick={() => handleReject(photo.fileId)} disabled={!isAdmin}>
                 <img className="icon" src={cross} alt="Reject" />
               </button>
             </div>
@@ -86,22 +146,11 @@ const PhotoGrid = () => {
         ))}
       </div>
 
-      {selectedPhotos.length > 0 && (
-        <div className="bulk-actions">
-          <button onDoubleClick={approveSelected} className="approve-button">
-            Approve
-          </button>
-          <button onClick={rejectSelected} className="reject-button">
-            Reject
-          </button>
-        </div>
-      )}
-
       {selectedPhoto && (
         <div className="modal">
           <div className="modal-content">
             <button className="close-button" onClick={() => setSelectedPhoto(null)}>&times;</button>
-            <img src={selectedPhoto.fileId} alt={selectedPhoto.fileName} className="modal-photo" />
+            <img src={`http://localhost:9333/${selectedPhoto.fileId}`} alt={selectedPhoto.fileName} className="modal-photo" />
             <p><strong>Uploader:</strong> {selectedPhoto.uploader}</p>
             <p><strong>Email:</strong> {selectedPhoto.uploaderEmail}</p>
             <p><strong>Uploaded on:</strong> {new Date(selectedPhoto.uploadedAt).toLocaleDateString()}</p>

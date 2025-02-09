@@ -21,15 +21,19 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 const Navbar = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser((prevUser) => prevUser || JSON.parse(localStorage.getItem("user")));
       } else {
         setUser(null);
+        localStorage.removeItem("user");
       }
     });
 
@@ -53,11 +57,25 @@ const Navbar = () => {
 
       if (!response.ok) {
         console.error(`Authentication failed: ${response.status} - ${response.statusText}`);
+        setError("Login failed. Please try again.");
         return;
       }
 
       const data = await response.json();
-      setUser(data);
+      console.log(result.user);
+      const userData = {
+        uid: result.user.uid,
+        email: result.user.email,
+        name: result.user.displayName,
+        picture: result.user.photoURL,
+        admin1: data.admin1 || false, // Check if user is admin
+      };
+
+      localStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
+      setError(null);
+
+      window.location.reload(); // Reload page after login
     } catch (error) {
       console.error("Error during authentication:", error);
       setError("An error occurred during authentication. Please try again.");
@@ -66,7 +84,11 @@ const Navbar = () => {
 
   const handleLogout = () => {
     signOut(auth)
-      .then(() => setUser(null))
+      .then(() => {
+        setUser(null);
+        localStorage.removeItem("user");
+        window.location.reload(); // Reload page after logout
+      })
       .catch((error) => console.error("Logout Error:", error));
   };
 
@@ -83,7 +105,7 @@ const Navbar = () => {
       <div className="navbar-buttons">
         {user ? (
           <div className="user-profile">
-            <img src={user.picture || "default-avatar.png"} alt="Profile" className="user-pfp" />
+            <img src={`https://images.weserv.nl/?url=${encodeURIComponent(user.picture)}`} alt="Profile" className="user-pfp" crossOrigin="anonymous"/>
             <button className="logout-btn" onClick={handleLogout}>Logout</button>
           </div>
         ) : (
