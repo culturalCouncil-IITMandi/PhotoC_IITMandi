@@ -81,7 +81,7 @@ export default function Upload() {
 
   return (
     <div className="upload-container">
-      <h1 className="upload-heading">Upload Image</h1>
+      <h1 className="upload-heading">Upload Images</h1>
 
       {/* Upload Box */}
       <label className="upload-box">
