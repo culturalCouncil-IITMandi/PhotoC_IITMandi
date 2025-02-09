@@ -1,5 +1,4 @@
 import express from 'express';
-import path from 'path';
 import cors from 'cors';
 
 import logger from './middleware/logger.js';
@@ -32,7 +31,7 @@ console.log(generateToken({ id: 1, email: 'divyansh.bt@gmail.com'}))
 
 // Logging middleware
 app.use(logger);
-// app.use(auth);
+app.use(auth);
 
 // routes
 app.use('/api/images', imageRoutes);
