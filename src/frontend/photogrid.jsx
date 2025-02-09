@@ -125,6 +125,7 @@ const PhotoGrid = () => {
               src={`${import.meta.env.VITE_SEAWEEDFS_URL}/${photo.fileId}`}
               alt={photo.fileName}
               className="photo"
+              loading="lazy"
             />
 
             <div className="photo-actions">
