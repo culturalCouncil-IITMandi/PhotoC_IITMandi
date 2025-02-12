@@ -1,0 +1,75 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #000000;
+
+  ::selection {
+    background-color: yellow;
+    color: black;
+  }
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Global Reset */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Ensure the page takes full height */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Root container fills the viewport */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensures full viewport height */
+}
+
+/* Wrapper to push footer down */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Ensures content pushes the footer down */
+}
+
+/* Content area takes up remaining space */
+.main-content {
+  flex-grow: 1; /* Prevents footer from overlapping */
+  padding-bottom: 60px; /* Reserve space for footer */
+}
+
+/* Footer styles */
+.footer {
+  background-color: rgb(43, 42, 42);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  width: 100%;
+  border-top: 1px solid #000;
+  color: #888484;
+  font-size: 14px;
+  text-align: center;
+  position: relative; /* Ensures it stays at bottom */
+  bottom: 0;
+  left: 0;
+}

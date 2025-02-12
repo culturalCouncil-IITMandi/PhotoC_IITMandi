@@ -1,0 +1,98 @@
+/* Ensure the html and body take the full height of the viewport */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif; /* Optional: Add a font family for consistency */
+}
+
+/* App styles */
+.App {
+  position: relative; /* Position context for the overlay */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 60%, black 100%), 
+              url("./assets/IMG_0940.JPG"); /* Background image */
+  background-size: cover;  /* Ensures the image covers the whole container */
+  background-position: center;  /* Centers the image */
+  height: 100vh;  /* Takes up the entire viewport height */
+  width: 100%;  /* Takes up the entire width */
+  margin: 0;  /* Removes any default margin around the div */
+  background-color: black; /* Fallback color in case image fails to load */
+  color: white;  /* Sets text color to white */
+  font-size: 2rem;  /* Adjust font size as needed */
+  font-weight: bold;
+  text-align: center; /* Ensures content is centered */
+}
+
+/* Black overlay - pseudo-element (keeps text readable) */
+.App::before {
+  content: '';  /* Necessary for the pseudo-element */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);  /* Darker black overlay (60% opacity) */
+  z-index: 1;  /* Ensure the overlay is above the image */
+}
+
+/* Ensure content inside App is above the overlay */
+.App > * {
+  position: relative;
+  z-index: 2;  /* Content stays on top of the overlay */
+}
+
+/* Header container */
+.App-header-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centers the content vertically */
+  align-items: center; /* Centers the content horizontally */
+  position: relative;
+  z-index: 2; /* Ensures text is above the overlay */
+  height: 100%;  /* Take up the full height */
+}
+
+/* Main header */
+.App-header {
+  font-size: 4rem;
+  font-weight: bold;
+}
+
+/* Secondary header */
+.App-header-2 {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (max-width: 768px) {
+  .App {
+    background-size: contain; /* Shrinks the image to fit */
+    font-size: 1.2rem;  /* Adjust font size for smaller screens */
+  }
+
+  .App-header {
+    font-size: 3rem; /* Adjust header font size */
+  }
+
+  .App-header-2 {
+    font-size: 1.5rem; /* Adjust secondary header font size */
+  }
+}
+
+/* Small devices (phones, 480px and up) */
+@media (max-width: 480px) {
+  .App {
+    background-size: cover; /* Shrinks the image to fit */
+    height: auto;  /* Allows the height to adjust */
+    font-size: 1rem;  /* Adjust font size for very small screens */
+    background-repeat: no-repeat;
+  }
+
+  .App-header {
+    font-size: 2.5rem; /* Adjust header font size */
+  }
+
+  .App-header-2 {
+    font-size: 1.0rem; /* Adjust secondary header font size */
+  }
+}

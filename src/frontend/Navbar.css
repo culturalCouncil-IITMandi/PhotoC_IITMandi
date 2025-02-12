@@ -1,0 +1,214 @@
+/* Navbar Container */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: rgba(10, 10, 10, 0.9); /* Darker background */
+  backdrop-filter: blur(10px); /* Glass effect */
+  color: white;
+  box-shadow: 0 4px 10px rgba(255, 255, 0, 0.1); /* Subtle yellow glow */
+  width: 100%;
+  height: 60px;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Navbar Hidden on Scroll */
+.navbar.hidden {
+  transform: translateY(-100%);
+}
+
+.logo-img {
+  height: 40px; /* Adjust size as needed */
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+  transform: scale(1.1);
+}
+
+/* Navigation Links */
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 40px;
+  padding: 0;
+}
+
+.navbar-links li {
+  display: inline;
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  transition: color 0.3s ease, transform 0.2s ease;
+  position: relative;
+  padding: 5px 0;
+}
+
+/* Cool Underline Effect */
+.navbar-links a::after {
+  content: "";
+  display: block;
+  width: 0%;
+  height: 2px;
+  background: #f1c40f;
+  transition: width 0.3s ease-in-out;
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+}
+
+.navbar-links a:hover::after {
+  width: 100%;
+}
+
+.navbar-links a:hover {
+  color: #f1c40f;
+}
+
+/* Buttons & User Profile */
+.navbar-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Login/Register Button */
+.auth-btn {
+  padding: 8px 14px;
+  border: 2px solid #f1c40f;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: bold;
+  background: transparent;
+  color: #f1c40f;
+  transition: all 0.3s ease;
+}
+
+.auth-btn:hover {
+  background: #f1c40f;
+  color: black;
+  box-shadow: 0px 0px 12px rgba(255, 255, 0, 0.4);
+}
+
+/* User Profile Section */
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Profile Picture */
+.user-pfp {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f1c40f;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.user-pfp:hover {
+  transform: scale(1.1);
+  border-color: #ffd700;
+}
+
+/* Logout Button */
+.logout-btn {
+  padding: 6px 10px;
+  border: 2px solid red;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  background: transparent;
+  color: red;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: red;
+  color: white;
+  box-shadow: 0px 0px 12px rgba(255, 0, 0, 0.4);
+}
+
+/* Mobile Menu */
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.hamburger-menu div {
+  width: 30px;
+  height: 3px;
+  background: white;
+  transition: transform 0.3s ease;
+}
+
+/* Responsive Design */
+/* Hamburger Menu */
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  z-index: 1100;
+}
+
+.hamburger-menu div {
+  width: 30px;
+  height: 3px;
+  background: white;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Animate Hamburger Icon */
+.hamburger-menu .bar.open:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.hamburger-menu .bar.open:nth-child(2) {
+  opacity: 0;
+}
+.hamburger-menu .bar.open:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Mobile Menu */
+@media (max-width: 768px) {
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background: rgba(15, 15, 15, 0.95);
+    backdrop-filter: blur(10px);
+    text-align: center;
+    padding: 20px 0;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .navbar-links.active {
+    display: flex;
+    transform: translateY(0);
+  }
+
+  .hamburger-menu {
+    display: flex;
+  }
+}

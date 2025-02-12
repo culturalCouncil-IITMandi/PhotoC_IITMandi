@@ -12,6 +12,7 @@ import { initFirebase } from './controllers/user.js';
 import imageRoutes from './routes/imageUpload.js';
 import approvalRoutes from './routes/approval.js';
 import imageAccessRoutes from './routes/imageAccess.js';
+import userRoutes from './routes/user.js';
 
 const port = process.env.PORT || 5000;
 const app = express();
@@ -37,9 +38,9 @@ app.use(auth);
 app.use('/api/images', imageRoutes);
 app.use('/api/approve', approvalRoutes);
 app.use('/api/filter', imageAccessRoutes);
-app.use("/api/login", authRoutes);
 
-// Error handler
+app.use('/api/user', userRoutes);
+
 app.use(notFound);
 app.use(errorHandler);
 
