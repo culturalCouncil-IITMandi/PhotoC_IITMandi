@@ -5,7 +5,6 @@ import fetch from "node-fetch";
 export const approvePost = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(req.params)
     const photo = await fileModel.findOne( { fileId: id } );
     if (!photo) {
       return res.status(404).json({ message: "Photo not found" });

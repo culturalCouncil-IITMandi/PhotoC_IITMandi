@@ -42,7 +42,6 @@ export const uploadImages = (req, res) => {
           uploaderEmail: req.body.userEmail || 'unknown',
           uploadedAt: date,
           approval: req.body.approved === 'true',
-          description: req.body.description,
           title: req.body.title,
         });
         await newFile.save();

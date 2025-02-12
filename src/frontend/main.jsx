@@ -23,44 +23,58 @@ const AuthRoute = ({ children }) => {
   return user ? children : <Navigate to="/" replace />;
 };
 
+// Main App Component
+const App = () => {
+  return (
+    <Router>
+      <div id="root">
+        <Navbar />
+        <div className="page-container">
+          <div className="main-content">
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <>
+                    <Hero />
+                    <BelowHero />
+                  </>
+                }
+              />
+              <Route path="/gallery" element={<Gallery />} />
+              <Route path="/about" element={<About />} />
+
+              {/* Protected Upload Page for Logged-in Users */}
+              <Route
+                path="/upload"
+                element={
+                  <AuthRoute>
+                    <Upload />
+                  </AuthRoute>
+                }
+              />
+
+              {/* Protected Approval Page for Admins */}
+              <Route
+                path="/approval"
+                element={
+                  <AdminRoute>
+                    <Approval />
+                  </AdminRoute>
+                }
+              />
+            </Routes>
+          </div>
+          <Footer />
+        </div>
+      </div>
+    </Router>
+  );
+};
+
+// Render App
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <Hero />
-              <BelowHero />
-            </>
-          }
-        />
-        <Route path="/gallery" element={<Gallery />} />
-        <Route path="/about" element={<About />} />
-        
-        {/* Protect the Upload Page for Logged-in Users */}
-        <Route
-          path="/upload"
-          element={
-            <AuthRoute>
-              <Upload />
-            </AuthRoute>
-          }
-        />
-
-        {/* Protect the Approval Page for Admins */}
-        <Route
-          path="/approval"
-          element={
-            <AdminRoute>
-              <Approval />
-            </AdminRoute>
-          }
-        />
-      </Routes>
-      <Footer />
-    </Router>
+    <App />
   </React.StrictMode>
 );

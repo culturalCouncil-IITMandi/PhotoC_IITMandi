@@ -2,21 +2,13 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #000000;
 
   ::selection {
     background-color: yellow;
-    color: black; 
-    border-radius: 10px; 
-  }
-
-  ::-webkit-selection {
-    background-color: yellow;
-    color: black; 
-    border-radius: 10px; 
+    color: black;
   }
 
   font-synthesis: none;
@@ -25,36 +17,59 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Global Reset for Margins and Padding */
+/* Global Reset */
 *,
 *::before,
 *::after {
   margin: 0;
   padding: 0;
-  box-sizing: border-box; /* Prevent elements from overflowing */
+  box-sizing: border-box;
 }
 
-/* Prevent Horizontal Scrolling */
+/* Ensure the page takes full height */
 html, body {
-  width: 100%; /* Ensure full viewport width */
-  overflow-x: hidden; /* Prevent horizontal scroll */
-  margin: 0; /* Remove any default margin */
-  padding: 0; /* Remove any unwanted padding */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Full Width of the Page */
-body {
-  max-width: 100vw; /* Ensure no overflow beyond viewport */
+/* Root container fills the viewport */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensures full viewport height */
 }
 
-/* Universal Styles for Links */
-a {
-  color: inherit; /* Links inherit color */
-  text-decoration: none; /* Remove default underline */
+/* Wrapper to push footer down */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Ensures content pushes the footer down */
 }
 
-a:hover {
-  text-decoration: underline; /* Optional: Add underline on hover for links */
+/* Content area takes up remaining space */
+.main-content {
+  flex-grow: 1; /* Prevents footer from overlapping */
+  padding-bottom: 60px; /* Reserve space for footer */
 }
 
-
+/* Footer styles */
+.footer {
+  background-color: rgb(43, 42, 42);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  width: 100%;
+  border-top: 1px solid #000;
+  color: #888484;
+  font-size: 14px;
+  text-align: center;
+  position: relative; /* Ensures it stays at bottom */
+  bottom: 0;
+  left: 0;
+}

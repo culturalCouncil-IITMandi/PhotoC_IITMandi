@@ -1,29 +1,40 @@
-/* Gallery container */
+/* Global Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #000000; /* Pure Black */
+    color: #f1c40f; /* Yellow Text */
+    margin: 0;
+    padding: 0;
+}
+
+/* Gallery Container */
 .photo-grid-container {
     padding: 20px;
 }
 
-/* Photo grid layout */
+/* Photo Grid Layout */
 .photo-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 15px;
 }
 
-/* Individual photo card */
+/* Individual Photo Card */
 .photo-card {
     position: relative;
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
     border-radius: 8px;
+    background-color: #121212; /* Dark Gray */
+    box-shadow: 0px 4px 10px rgba(255, 255, 0, 0.3); /* Yellow Glow */
 }
 
 .photo-card:hover {
     transform: scale(1.02);
 }
 
-/* Photo styling */
+/* Photo Styling */
 .photo {
     width: 100%;
     height: 200px;
@@ -32,27 +43,36 @@
     border-radius: 8px;
 }
 
-/* Minimized white box just around the text */
+/* Info Box Over Photo */
 .photo-info {
     position: absolute;
     bottom: 10px;
     left: 10px;
-    right: auto;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.6); /* White with 80% opacity */
+    padding: 6px 12px;
     border-radius: 5px;
     font-size: 12px;
-    color: #333;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    color: black;
+    box-shadow: 0px 2px 5px rgba(255, 255, 0, 0.5);
     max-width: 85%;
     white-space: nowrap;
+    transition: background 0.3s ease;
 }
 
-/* Heart remains outside the white box */
+/* Slight hover effect to make it clearer when hovered */
+.photo-info:hover {
+    background: rgba(255, 255, 255, 0.8); /* Fully visible on hover */
+}
+
+
+/* Like Button (Heart) */
 .like-container {
     position: absolute;
     bottom: 10px;
     right: 10px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 5px;
+    padding: 6px 12px;
 }
 
 .like-button {
@@ -60,11 +80,13 @@
     border: none;
     cursor: pointer;
     font-size: 16px;
-    color: red;
+    color: #222;
+    /* color: #f1c40f; Yellow Heart */
+    transition: transform 0.2s ease;
 }
 
 .like-button:hover {
-    transform: scale(1.1);
+    transform: scale(1.2);
 }
 
 /* MODAL STYLES */
@@ -74,58 +96,50 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.9); /* Darker Black Overlay */
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+/* Modal Content Box */
+/* Modal Content */
 .modal-content {
-    background: white;
-    padding: 8px;
-    border-radius: 4px;
+    background: #121212; /* Dark Gray-Black */
+    padding: 20px;
+    border-radius: 8px;
     max-width: 80%;
     max-height: 90%;
     text-align: center;
     position: relative;
+    box-shadow: 0px 4px 15px rgba(255, 255, 0, 0.2); /* Subtle Yellow Glow */
+    border: 2px solid rgba(255, 255, 0, 0.3); /* Soft Yellow Border */
+    color: #f1c40f;
 }
 
-/* Modal photo container */
-.modal-photo-container {
-    position: relative;
-    display: inline-block;
+.modal-content h1,
+.modal-content h2,
+.modal-content h3,
+.modal-content h4,
+.modal-content h5,
+.modal-content h6,
+.modal-content p,
+.modal-content span,
+.modal-content a {
+    color: #f1c40f !important; /* Force White */
 }
 
+/* Modal Image */
 .modal-photo {
     width: 100%;
     max-height: 500px;
     object-fit: cover;
     border-radius: 5px;
+    border: 2px solid #f1c40f; /* Yellow Border */
+    box-shadow: 0px 4px 10px rgba(255, 255, 0, 0.3); /* Slight Glow */
 }
 
-/* White box for modal image */
-.photo-details {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    right: auto;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 6px 12px;
-    border-radius: 5px;
-    font-size: 14px;
-    color: #333;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    max-width: 85%;
-    white-space: nowrap;
-}
-
-/* Like button stays outside for modal too */
-.modal .like-container {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-}
-
+/* Close Button */
 .close-button {
     position: absolute;
     top: 10px;
@@ -133,5 +147,86 @@
     background: none;
     border: none;
     font-size: 24px;
+    color: #f1c40f; /* Yellow Close Button */
     cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.close-button:hover {
+    transform: scale(1.2);
+    color: #ffd700; /* Slightly brighter yellow on hover */
+}
+
+
+/* FILTER TAB STYLING */
+.filter-tab {
+    background-color: #121212; /* Dark Background */
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    align-items: center;
+    box-shadow: 0px 4px 10px rgba(255, 255, 0, 0.3); /* Yellow Glow */
+}
+
+/* Input & Select Fields */
+.filter-tab select,
+.filter-tab input {
+    background-color: #1e1e1e;
+    color: #f1c40f; /* Yellow Text */
+    border: 2px solid #f1c40f; /* Yellow Border */
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+/* Change border color when focused */
+.filter-tab select:focus,
+.filter-tab input:focus {
+    border-color: #ffd700;
+    box-shadow: 0px 0px 5px #ffd700;
+}
+
+/* Apply Button */
+.filter-tab button {
+    background-color: #f1c40f;
+    color: black;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-tab button:hover {
+    background-color: #ffd700;
+    box-shadow: 0px 0px 10px #ffd700;
+}
+
+/* FOOTER */
+.footer {
+    background-color: #121212;
+    color: #f1c40f;
+    text-align: center;
+    padding: 16px;
+    font-size: 14px;
+    border-top: 2px solid #f1c40f;
+}
+
+/* MOBILE RESPONSIVENESS */
+@media (max-width: 768px) {
+    .photo-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on smaller screens */
+    }
+
+    .filter-tab {
+        flex-direction: column;
+        gap: 10px;
+    }
 }
