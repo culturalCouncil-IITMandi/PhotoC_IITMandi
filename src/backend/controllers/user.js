@@ -1,5 +1,5 @@
 import admin from 'firebase-admin';
-import serviceAccount from '../serviceAccount.json' assert { type: "json" };
+import serviceAccount from '../serviceAccount.json' with { type: "json" };
 
 const ADMINS = process.env.ADMINS ? process.env.ADMINS.split(',') : [];
 
