@@ -103,7 +103,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-logo">
-        <img src="./public/ico.png" alt="PhotoGallery Logo" className="logo-img" />
+        <img src="/ico.png" alt="PhotoGallery Logo" className="logo-img" />
       </Link>
 
       {/* Hamburger Menu */}
