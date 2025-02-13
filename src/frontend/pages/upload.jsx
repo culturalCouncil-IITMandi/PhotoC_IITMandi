@@ -169,9 +169,7 @@ export default function Upload() {
     className="submit-button" 
     onClick={handleUpload} 
     disabled={
-      images.length === 0 || // At least 1 file must be uploaded
-      !selectedEvent || // An event must be selected
-      uploading // Prevent clicking during upload
+      images.length === 0// At least 1 file must be uploaded
     }
   >
     {uploading ? "UPLOADING..." : "UPLOAD IMAGES"}
