@@ -38,14 +38,77 @@ export default function Upload() {
     const imagePreviews = files.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
-      name: file.name, // ✅ Store file name
+      name: file.name,
     }));
-    setImages([...images, ...imagePreviews]); // ✅ Allow multiple images
+    setImages([...images, ...imagePreviews]);
   };
 
   // ✅ Remove Image
   const removeImage = (index) => {
     setImages(images.filter((_, i) => i !== index));
+  };
+
+  // ✅ Handle Event Selection
+  const handleEventChange = (e) => {
+    const value = e.target.value;
+    if (value === "create_new") {
+      setIsCreatingEvent(true);
+      setSelectedEvent("");
+    } else {
+      setIsCreatingEvent(false);
+      setSelectedEvent(value);
+    }
+  };
+
+  // ✅ Handle Upload
+  const handleUpload = async () => {
+    if (!user) {
+      setError("You must be logged in to upload images.");
+      return;
+    }
+    if (images.length === 0) {
+      setError("Please select at least one image.");
+      return;
+    }
+    if (isCreatingEvent && !newEvent.trim()) {
+      setError("Please enter a name for the new event.");
+      return;
+    }
+
+    setUploading(true);
+    setError(null);
+
+    const formData = new FormData();
+    images.forEach((img) => formData.append("files", img.file));
+    formData.append("title", title);
+    formData.append("uploaderName", user.name);
+    formData.append("userEmail", user.email);
+    formData.append("event", isCreatingEvent ? newEvent : selectedEvent);
+    formData.append("approved", user.admin1 ? "true" : "false");
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/images/upload`, {
+        method: "POST",
+        headers: { "X-API-KEY": import.meta.env.VITE_X_API_KEY },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.statusText}`);
+      }
+
+      console.log("Upload successful");
+      setImages([]);
+      setTitle("");
+      setSelectedEvent("");
+      setNewEvent("");
+      setIsCreatingEvent(false);
+    } catch (error) {
+      console.error("Error uploading:", error);
+      setError("Upload failed. Please try again.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -69,8 +132,50 @@ export default function Upload() {
         ))}
       </div>
 
+      {/* Title Input */}
+      <div className="input-group">
+        <label className="input-label">Title</label>
+        <input 
+          type="text" 
+          placeholder="Enter title" 
+          className="input-field" 
+          value={title} 
+          onChange={(e) => setTitle(e.target.value)} 
+        />
+      </div>
+
+      {/* Event Selection */}
+      <div className="input-group">
+        <label className="input-label">Event</label>
+        <select className="input-field" value={isCreatingEvent ? "create_new" : selectedEvent} onChange={handleEventChange}>
+          <option value="" disabled>Select an event</option>
+          {events.map((event) => (
+            <option key={event} value={event}>{event}</option>
+          ))}
+          <option value="create_new">Create New Event</option>
+        </select>
+      </div>
+
+      {/* New Event Name Input (if creating a new event) */}
+      {isCreatingEvent && (
+        <div className="input-group">
+          <label className="input-label">New Event Name</label>
+          <input 
+            type="text" 
+            placeholder="Enter new event name" 
+            className="input-field" 
+            value={newEvent} 
+            onChange={(e) => setNewEvent(e.target.value)} 
+          />
+        </div>
+      )}
+
       {/* Upload Button */}
-      <button className="submit-button" onClick={() => {}} disabled={images.length === 0}>
+      <button 
+        className="submit-button" 
+        onClick={handleUpload} 
+        disabled={images.length === 0 || (!selectedEvent && !isCreatingEvent) || uploading}
+      >
         {uploading ? "UPLOADING..." : "UPLOAD IMAGES"}
       </button>
 
