@@ -19,6 +19,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
+provider.setCustomParameters({ hd: "students.iitmandi.ac.in" }); // Restrict Google login UI
 
 const Navbar = () => {
   const [user, setUser] = useState(() => {
@@ -56,8 +57,16 @@ const Navbar = () => {
   const handleAuth = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      const idToken = await result.user.getIdToken(true);
+      const email = result.user.email;
 
+      // Reject login if email is not from students.iitmandi.ac.in
+      if (!email.endsWith("@students.iitmandi.ac.in")) {
+        await signOut(auth);
+        setError("Only students.iitmandi.ac.in emails are allowed.");
+        return;
+      }
+
+      const idToken = await result.user.getIdToken(true);
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/login`, {
         method: "POST",
         headers: {
@@ -75,7 +84,7 @@ const Navbar = () => {
 
       const data = await response.json();
       const userData = {
-        email: result.user.email,
+        email,
         name: result.user.displayName,
         picture: result.user.photoURL,
         admin1: data.admin1 || false,
