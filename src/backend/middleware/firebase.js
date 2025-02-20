@@ -1,4 +1,4 @@
-import admin from "../config/firebaseConfig.js";
+import admin from "../helpers/firebaseConfig.js";
 
 export const isAuthenticated = async (req, res, next) => {
   
