@@ -1,7 +1,6 @@
 import express from 'express'
 
 import { uploadImages } from '../controllers/imageUpload.js'
-import { isAuthenticated } from '../middleware/firebase.js'
 import { likePhoto, getLikes } from '../controllers/like.js'
 
 const router = express.Router();
