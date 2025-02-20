@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom"; // ✅ Read filters from URL
+import React, { useState, useEffect, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import "./gallery.css";
 
 const Gallery = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  
+
   const [photos, setPhotos] = useState([]);
   const [filteredPhotos, setFilteredPhotos] = useState([]);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
-  const [events, setEvents] = useState([]);
-  const [uploaders, setUploaders] = useState([]);
   const [filters, setFilters] = useState({
-    event: queryParams.get("event") || "", // ✅ Auto-set event filter from URL
+    event: queryParams.get("event") || "",
     uploader: "",
     startDate: "",
     endDate: "",
@@ -22,69 +20,20 @@ const Gallery = () => {
     fetchPhotos();
   }, []);
 
-  // ✅ Apply URL filter automatically when page loads or URL changes
   useEffect(() => {
     setFilters((prevFilters) => ({
       ...prevFilters,
-      event: queryParams.get("event") || prevFilters.event, 
+      event: queryParams.get("event") || prevFilters.event,
     }));
-  }, [location.search]); // ✅ Runs when the URL changes
+  }, [location.search]);
 
-  // ✅ Apply filters whenever filters change
   useEffect(() => {
     applyFilters();
   }, [filters]);
-  const handleLike = async (photoId) => {
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-      alert("Please log in to like photos.");
-      return;
-    }
-  
-    const userId = JSON.parse(storedUser).email;
-  
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/images/like/${photoId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-KEY": import.meta.env.VITE_X_API_KEY,
-        },
-        body: JSON.stringify({ userId }),
-      });
-  
-      if (!response.ok) {
-        throw new Error("Failed to update like");
-      }
-  
-      const data = await response.json();
-  
-      // ✅ Update both `photos` and `filteredPhotos`
-      setPhotos((prevPhotos) =>
-        prevPhotos.map((photo) =>
-          photo.fileId === photoId ? { ...photo, likes: data.likes } : photo
-        )
-      );
-  
-      setFilteredPhotos((prevFilteredPhotos) =>
-        prevFilteredPhotos.map((photo) =>
-          photo.fileId === photoId ? { ...photo, likes: data.likes } : photo
-        )
-      );
-  
-      // ✅ If modal is open, update `selectedPhoto`
-      setSelectedPhoto((prevPhoto) =>
-        prevPhoto && prevPhoto.fileId === photoId ? { ...prevPhoto, likes: data.likes } : prevPhoto
-      );
-    } catch (error) {
-      console.error("Error liking the photo:", error);
-    }
-  };
-  
 
-  const fetchPhotos = async (queryParams = "") => {
+  const fetchPhotos = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/filter?approved=true${queryParams}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/filter?approved=true`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -95,21 +44,11 @@ const Gallery = () => {
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
       const data = await response.json();
-      if (!data.files.length) {
-        setPhotos([]);
-        setFilteredPhotos([]);
-        return;
-      }
-
-      setPhotos(data.files);
-      setFilteredPhotos(data.files);
-
-      if (events.length === 0 && uploaders.length === 0) {
-        const uniqueEvents = [...new Set(data.files.map((photo) => photo.event).filter(Boolean))];
-        const uniqueUploaders = [...new Set(data.files.map((photo) => photo.uploader).filter(Boolean))];
-        setEvents(uniqueEvents);
-        setUploaders(uniqueUploaders);
-      }
+      const filtered = data.files.filter(photo =>
+        (!filters.event || photo.event === filters.event)
+      );
+      setPhotos(data.files || []);
+      setFilteredPhotos(filtered || []);
     } catch (error) {
       console.error("Error fetching photos:", error);
       setPhotos([]);
@@ -117,41 +56,69 @@ const Gallery = () => {
     }
   };
 
-  const applyFilters = () => {
-    let query = "";
-    if (filters.event) query += `&event=${encodeURIComponent(filters.event)}`;
-    if (filters.uploader) query += `&uploader=${encodeURIComponent(filters.uploader)}`;
-    if (filters.startDate) query += `&startDate=${filters.startDate}`;
-    if (filters.endDate) query += `&endDate=${filters.endDate}`;
+  const applyFilters = useCallback(() => {
+    setFilteredPhotos(
+      photos.filter((photo) => {
+        return (
+          (!filters.event || photo.event === filters.event) &&
+          (!filters.uploader || photo.uploader === filters.uploader) &&
+          (!filters.startDate || new Date(photo.uploadedAt) >= new Date(filters.startDate)) &&
+          (!filters.endDate || new Date(photo.uploadedAt) <= new Date(filters.endDate))
+        );
+      })
+    );
+  }, [filters, photos]);
 
-    fetchPhotos(query);
+  const handleLike = async (photoId) => {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
+      alert("Please log in to like photos.");
+      return;
+    }
+
+    const userId = JSON.parse(storedUser).email;
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/images/like/${photoId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": import.meta.env.VITE_X_API_KEY,
+        },
+        body: JSON.stringify({ userId }),
+      });
+
+      if (!response.ok) throw new Error("Failed to update like");
+
+      const data = await response.json();
+      setPhotos((prev) => prev.map((photo) => (photo.fileId === photoId ? { ...photo, likes: data.likes } : photo)));
+    } catch (error) {
+      console.error("Error liking the photo:", error);
+    }
   };
 
-  // ✅ Dynamically update filters on selection
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
+  const uniqueEvents = [...new Set(photos.map((photo) => photo.event).filter(Boolean))];
+  const uniqueUploaders = [...new Set(photos.map((photo) => photo.uploader).filter(Boolean))];
+
   return (
     <>
-      {/* ✅ Filter Tab - Now Works Instantly */}
       <div className="filter-tab">
         <select name="event" value={filters.event} onChange={handleFilterChange}>
           <option value="">All Events</option>
-          {events.map((event, index) => (
-            <option key={index} value={event}>
-              {event}
-            </option>
+          {uniqueEvents.map((event, index) => (
+            <option key={index} value={event}>{event}</option>
           ))}
         </select>
 
         <select name="uploader" value={filters.uploader} onChange={handleFilterChange}>
           <option value="">All Uploaders</option>
-          {uploaders.map((uploader, index) => (
-            <option key={index} value={uploader}>
-              {uploader}
-            </option>
+          {uniqueUploaders.map((uploader, index) => (
+            <option key={index} value={uploader}>{uploader}</option>
           ))}
         </select>
 
@@ -179,15 +146,15 @@ const Gallery = () => {
                   <p className="photo-event">{`Event: ${photo.event}`}</p>
                 </div>
                 <div className="like-container">
-                <button className="like-button" onClick={() => handleLike(photo.fileId)}>
-                  ❤️ {photo.likes || 0}
-                </button>
-              </div>
+                  <button className="like-button" onClick={() => handleLike(photo.fileId)}>
+                    ❤️ {photo.likes || 0}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         )}
-
+        
         {selectedPhoto && (
           <div className="modal" onClick={() => setSelectedPhoto(null)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>

@@ -64,7 +64,6 @@ body {
     background: rgba(255, 255, 255, 0.8); /* Fully visible on hover */
 }
 
-
 /* Like Button (Heart) */
 .like-container {
     position: absolute;
@@ -81,7 +80,6 @@ body {
     cursor: pointer;
     font-size: 16px;
     color: #222;
-    /* color: #f1c40f; Yellow Heart */
     transition: transform 0.2s ease;
 }
 
@@ -100,9 +98,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1000; /* Ensures modal is above everything */
 }
 
-/* Modal Content Box */
 /* Modal Content */
 .modal-content {
     background: #121212; /* Dark Gray-Black */
@@ -126,7 +124,7 @@ body {
 .modal-content p,
 .modal-content span,
 .modal-content a {
-    color: #f1c40f !important; /* Force White */
+    color: #f1c40f !important; /* Force Yellow */
 }
 
 /* Modal Image */
@@ -156,7 +154,6 @@ body {
     transform: scale(1.2);
     color: #ffd700; /* Slightly brighter yellow on hover */
 }
-
 
 /* FILTER TAB STYLING */
 .filter-tab {
@@ -217,6 +214,15 @@ body {
     padding: 16px;
     font-size: 14px;
     border-top: 2px solid #f1c40f;
+    position: relative;
+    z-index: 10; /* Default z-index */
+    transition: opacity 0.3s ease, z-index 0.3s ease;
+}
+
+/* Hide footer behind modal */
+.footer.hidden {
+    z-index: -1; /* Move footer behind everything */
+    opacity: 0.3; /* Faded effect */
 }
 
 /* MOBILE RESPONSIVENESS */

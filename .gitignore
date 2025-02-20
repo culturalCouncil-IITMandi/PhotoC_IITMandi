@@ -2,4 +2,7 @@
 node_modules/
 src/backend/serviceAccount.json
 test.html
-src/backend/config/serviceAccountKey.json
+src/backend/dist/
+src/backend/filterldb2/
+src/frontend/dist/
+src/frontend/filterldb2/
