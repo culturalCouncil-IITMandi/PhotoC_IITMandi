@@ -47,6 +47,7 @@ const Gallery = () => {
       const filtered = data.files.filter(photo =>
         (!filters.event || photo.event === filters.event)
       );
+      
       setPhotos(data.files || []);
       setFilteredPhotos(filtered || []);
     } catch (error) {
@@ -169,7 +170,35 @@ const Gallery = () => {
               </button>
 
               <div className="modal-photo-container">
-                <img src={selectedPhoto.seaweedUrl} alt={selectedPhoto.fileName} className="modal-photo" />
+                <img 
+                  src={selectedPhoto.seaweedUrl} 
+                  alt={selectedPhoto.fileName} 
+                  className="modal-photo"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/images/download/${selectedPhoto.fileId}`, {
+                        method: 'GET',
+                        headers: {
+                          'X-API-KEY': import.meta.env.VITE_X_API_KEY
+                        },
+                      });
+                      if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                      }
+                      const blob = await response.blob();
+                      const url = window.URL.createObjectURL(blob);
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = selectedPhoto.fileName;
+                      link.click();
+                      window.URL.revokeObjectURL(url);
+                    } catch (error) {
+                      console.error('Error downloading image:', error);
+                      alert('Failed to download image. Please try again.');
+                    }
+                  }}
+                  style={{cursor: 'pointer'}}
+                />
                 <div className="photo-details">
                   <p><strong>Uploaded by:</strong> {selectedPhoto.uploader || "Unknown"}</p>
                   <p><strong>Date Uploaded:</strong> 📅 {new Date(selectedPhoto.uploadedAt).toLocaleDateString()}</p>
@@ -234,7 +263,7 @@ const Gallery = () => {
                   </button>
                 )}
                 <button className="like-button" onClick={() => handleLike(selectedPhoto.fileId)}>
-                  ❤️ {selectedPhoto.likes || 0}
+                  ❤️ {photos.find((p) => p.fileId === selectedPhoto.fileId).likes || 0}
                 </button>
               </div>
             </div>
