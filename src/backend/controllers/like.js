@@ -60,3 +60,24 @@ export const getLikes = async (req, res) => {
     });
   }
 };
+
+export const downloadPhoto = async (req, res) => {
+  try {    
+      const { id } = req.params;
+      const seaweedUrl = `http://20.191.66.216:8080/${id}`;
+    
+      try {
+        const response = await fetch(seaweedUrl);
+        const data = await response.arrayBuffer();
+        res.set("Access-Control-Allow-Origin", "*");
+        res.send(Buffer.from(data));
+      } catch (error) {
+        res.status(500).send("Error fetching from SeaweedFS");
+      }
+    } catch (err) {
+      res.status(500).json({
+        message: "Error downloading photo",
+        error: err.message,
+      });
+    }
+  };

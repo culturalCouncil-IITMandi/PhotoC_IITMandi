@@ -91,8 +91,12 @@ const Gallery = () => {
       if (!response.ok) throw new Error("Failed to update like");
 
       const data = await response.json();
-      setPhotos((prev) => prev.map((photo) => (photo.fileId === photoId ? { ...photo, likes: data.likes } : photo)));
-    } catch (error) {
+      setPhotos((prevPhotos) => [...prevPhotos.map((photo) =>
+        photo.fileId === photoId ? { ...photo, likes: data.likes } : photo
+      )]);
+
+      
+          } catch (error) {
       console.error("Error liking the photo:", error);
     }
   };
@@ -146,8 +150,10 @@ const Gallery = () => {
                   <p className="photo-event">{`Event: ${photo.event}`}</p>
                 </div>
                 <div className="like-container">
-                  <button className="like-button" onClick={() => handleLike(photo.fileId)}>
-                    ❤️ {photo.likes || 0}
+                  <button className="like-button" onClick={() => {
+                    handleLike(photo.fileId);
+                  }}>
+                    ❤️ {photos.find((p) => p.fileId === photo.fileId).likes || 0}
                   </button>
                 </div>
               </div>
@@ -177,7 +183,12 @@ const Gallery = () => {
                 className="download-button"
                 onClick={async () => {
                   try {
-                    const response = await fetch(selectedPhoto.seaweedUrl);
+                    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/images/download/${selectedPhoto.fileId}`, {
+                      method: 'GET',
+                      headers: {
+                        'X-API-KEY': import.meta.env.VITE_X_API_KEY
+                      },
+                    });
                     if (!response.ok) {
                       throw new Error(`HTTP error! Status: ${response.status}`);
                     }
@@ -203,7 +214,7 @@ const Gallery = () => {
                     className="disapprove-button"
                     onClick={async () => {
                       try {
-                        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/images/${selectedPhoto.fileId}/disapprove`, {
+                        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/approve/disapprove/${selectedPhoto.fileId}`, {
                           method: "POST",
                           headers: {
                             "Content-Type": "application/json",
