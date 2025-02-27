@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="footer">
       <p className="footer-text">
-        &copy; 2025, Your Website Name. All Rights Reserved.
+        &copy; 2025, Photography Club IIT Mandi. All Rights Reserved.
       </p>
     </footer>
   );

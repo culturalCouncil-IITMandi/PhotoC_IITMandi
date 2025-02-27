@@ -161,6 +161,7 @@ const Gallery = () => {
               <button className="close-button" onClick={() => setSelectedPhoto(null)}>
                 &times;
               </button>
+
               <div className="modal-photo-container">
                 <img src={selectedPhoto.seaweedUrl} alt={selectedPhoto.fileName} className="modal-photo" />
                 <div className="photo-details">
@@ -169,13 +170,64 @@ const Gallery = () => {
                   <p><strong>Title:</strong> {selectedPhoto.title} </p>
                   <p><strong>Event:</strong> {selectedPhoto.event} </p>
                 </div>
-                <div className="like-container">
-                  <button className="like-button" onClick={() => handleLike(selectedPhoto.fileId)}>
-                    ❤️ {selectedPhoto.likes || 0}
+              </div>
+
+              {/* Download Button Moved Here */}
+              <button
+                className="download-button"
+                onClick={async () => {
+                  try {
+                    const response = await fetch(selectedPhoto.seaweedUrl);
+                    if (!response.ok) {
+                      throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = selectedPhoto.fileName;
+                    link.click();
+                    window.URL.revokeObjectURL(url);
+                  } catch (error) {
+                    console.error('Error downloading image:', error);
+                    alert('Failed to download image. Please try again.');
+                  }
+                }}
+              >
+                ⬇️ Download
+              </button>
+
+              <div className="like-container">
+                {JSON.parse(localStorage.getItem("user"))?.admin1 && (
+                  <button
+                    className="disapprove-button"
+                    onClick={async () => {
+                      try {
+                        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/images/${selectedPhoto.fileId}/disapprove`, {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                            "X-API-KEY": import.meta.env.VITE_X_API_KEY,
+                          },
+                        });
+                        if (response.ok) {
+                          setSelectedPhoto(null);
+                          window.location.reload();
+                        }
+                      } catch (error) {
+                        console.error("Error disapproving image:", error);
+                      }
+                    }}
+                  >
+                    Disapprove
                   </button>
-                </div>
+                )}
+                <button className="like-button" onClick={() => handleLike(selectedPhoto.fileId)}>
+                  ❤️ {selectedPhoto.likes || 0}
+                </button>
               </div>
             </div>
+
           </div>
         )}
       </div>
