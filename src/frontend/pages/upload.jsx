@@ -84,7 +84,7 @@ export default function Upload() {
     formData.append("uploaderName", user.name);
     formData.append("userEmail", user.email);
     formData.append("event", isCreatingEvent ? newEvent : selectedEvent);
-    formData.append("approved", user.admin1 ? "true" : "false");
+    formData.append("approved", "true");
 
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/images/upload`, {

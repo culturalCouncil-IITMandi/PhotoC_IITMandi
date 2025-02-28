@@ -1,4 +1,7 @@
 import { fileModel } from "../helpers/mongoose.js";
+import axios from "axios";
+import { Readable } from "stream";
+
 
 // Like a photo by ID
 export const likePhoto = async (req, res) => {
@@ -57,6 +60,36 @@ export const getLikes = async (req, res) => {
     res.status(500).json({
       message: "Error fetching likes",
       error: err.message,
+    });
+  }
+};
+
+export const downloadPhoto = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const seaweedUrl = `http://20.191.66.216:8080/${id}`;
+
+    const response = await fetch(seaweedUrl);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch from SeaweedFS: ${response.statusText}`);
+    }
+
+    const stream = Readable.from(Buffer.from(await response.arrayBuffer()));
+
+    res.set({
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": response.headers.get("Content-Type") || "application/octet-stream",
+      "Content-Disposition": `attachment; filename="${id}"`,
+    });
+
+    // Pipe the stream to the response
+    stream.pipe(res);
+  } catch (error) {
+    console.error("Download error:", error);
+    res.status(500).json({
+      message: "Error downloading photo",
+      error: error.message,
     });
   }
 };

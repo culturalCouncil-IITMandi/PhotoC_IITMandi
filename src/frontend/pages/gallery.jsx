@@ -47,6 +47,7 @@ const Gallery = () => {
       const filtered = data.files.filter(photo =>
         (!filters.event || photo.event === filters.event)
       );
+      
       setPhotos(data.files || []);
       setFilteredPhotos(filtered || []);
     } catch (error) {
@@ -91,8 +92,12 @@ const Gallery = () => {
       if (!response.ok) throw new Error("Failed to update like");
 
       const data = await response.json();
-      setPhotos((prev) => prev.map((photo) => (photo.fileId === photoId ? { ...photo, likes: data.likes } : photo)));
-    } catch (error) {
+      setPhotos((prevPhotos) => [...prevPhotos.map((photo) =>
+        photo.fileId === photoId ? { ...photo, likes: data.likes } : photo
+      )]);
+
+      
+          } catch (error) {
       console.error("Error liking the photo:", error);
     }
   };
@@ -146,8 +151,10 @@ const Gallery = () => {
                   <p className="photo-event">{`Event: ${photo.event}`}</p>
                 </div>
                 <div className="like-container">
-                  <button className="like-button" onClick={() => handleLike(photo.fileId)}>
-                    ❤️ {photo.likes || 0}
+                  <button className="like-button" onClick={() => {
+                    handleLike(photo.fileId);
+                  }}>
+                    ❤️ {photos.find((p) => p.fileId === photo.fileId).likes || 0}
                   </button>
                 </div>
               </div>
@@ -161,21 +168,106 @@ const Gallery = () => {
               <button className="close-button" onClick={() => setSelectedPhoto(null)}>
                 &times;
               </button>
+
               <div className="modal-photo-container">
-                <img src={selectedPhoto.seaweedUrl} alt={selectedPhoto.fileName} className="modal-photo" />
+                <img 
+                  src={selectedPhoto.seaweedUrl} 
+                  alt={selectedPhoto.fileName} 
+                  className="modal-photo"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/images/download/${selectedPhoto.fileId}`, {
+                        method: 'GET',
+                        headers: {
+                          'X-API-KEY': import.meta.env.VITE_X_API_KEY
+                        },
+                      });
+                      if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                      }
+                      const blob = await response.blob();
+                      const url = window.URL.createObjectURL(blob);
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = selectedPhoto.fileName;
+                      link.click();
+                      window.URL.revokeObjectURL(url);
+                    } catch (error) {
+                      console.error('Error downloading image:', error);
+                      alert('Failed to download image. Please try again.');
+                    }
+                  }}
+                  style={{cursor: 'pointer'}}
+                />
                 <div className="photo-details">
                   <p><strong>Uploaded by:</strong> {selectedPhoto.uploader || "Unknown"}</p>
                   <p><strong>Date Uploaded:</strong> 📅 {new Date(selectedPhoto.uploadedAt).toLocaleDateString()}</p>
                   <p><strong>Title:</strong> {selectedPhoto.title} </p>
                   <p><strong>Event:</strong> {selectedPhoto.event} </p>
                 </div>
-                <div className="like-container">
-                  <button className="like-button" onClick={() => handleLike(selectedPhoto.fileId)}>
-                    ❤️ {selectedPhoto.likes || 0}
+              </div>
+
+              {/* Download Button Moved Here */}
+              <button
+                className="download-button"
+                onClick={async () => {
+                  try {
+                    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/images/download/${selectedPhoto.fileId}`, {
+                      method: 'GET',
+                      headers: {
+                        'X-API-KEY': import.meta.env.VITE_X_API_KEY
+                      },
+                    });
+                    if (!response.ok) {
+                      throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = selectedPhoto.fileName;
+                    link.click();
+                    window.URL.revokeObjectURL(url);
+                  } catch (error) {
+                    console.error('Error downloading image:', error);
+                    alert('Failed to download image. Please try again.');
+                  }
+                }}
+              >
+                ⬇️ Download
+              </button>
+
+              <div className="like-container">
+                {JSON.parse(localStorage.getItem("user"))?.admin1 && (
+                  <button
+                    className="disapprove-button"
+                    onClick={async () => {
+                      try {
+                        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/approve/disapprove/${selectedPhoto.fileId}`, {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                            "X-API-KEY": import.meta.env.VITE_X_API_KEY,
+                          },
+                        });
+                        if (response.ok) {
+                          setSelectedPhoto(null);
+                          window.location.reload();
+                        }
+                      } catch (error) {
+                        console.error("Error disapproving image:", error);
+                      }
+                    }}
+                  >
+                    Disapprove
                   </button>
-                </div>
+                )}
+                <button className="like-button" onClick={() => handleLike(selectedPhoto.fileId)}>
+                  ❤️ {photos.find((p) => p.fileId === selectedPhoto.fileId).likes || 0}
+                </button>
               </div>
             </div>
+
           </div>
         )}
       </div>

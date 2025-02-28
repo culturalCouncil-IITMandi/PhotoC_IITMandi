@@ -26,6 +26,28 @@ export const approvePost = async (req, res) => {
   }
 };
 
+export const disapprovePost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const photo = await fileModel.findOne({ fileId: id });
+    if (!photo) {
+      return res.status(404).json({ message: "Photo not found" });
+    }
+
+    photo.approval = false;
+    const updatedPhoto = await photo.save();
+
+    res.status(200).json({
+      message: "Photo disapproved successfully",
+      photo: updatedPhoto,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Error disapproving photo",
+      error: err.message,
+    });
+  }
+};
 
 export const delApprovePost = async (req, res) => {
   try {

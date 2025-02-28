@@ -103,17 +103,22 @@ body {
 
 /* Modal Content */
 .modal-content {
-    background: #121212; /* Dark Gray-Black */
+    background: #121212;
     padding: 20px;
     border-radius: 8px;
     max-width: 80%;
     max-height: 90%;
     text-align: center;
-    position: relative;
-    box-shadow: 0px 4px 15px rgba(255, 255, 0, 0.2); /* Subtle Yellow Glow */
-    border: 2px solid rgba(255, 255, 0, 0.3); /* Soft Yellow Border */
+    position: relative; /* Ensures child elements like the button are positioned relative to this */
+    box-shadow: 0px 4px 15px rgba(255, 255, 0, 0.2);
+    border: 2px solid rgba(255, 255, 0, 0.3);
     color: #f1c40f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Ensures content aligns properly */
 }
+
 
 .modal-content h1,
 .modal-content h2,
@@ -154,6 +159,36 @@ body {
     transform: scale(1.2);
     color: #ffd700; /* Slightly brighter yellow on hover */
 }
+
+.disapprove-button {
+  background-color: red;
+  color: black;
+  margin-right: 10px;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+}
+
+.download-button {
+    background-color: #f1c40f;
+    color: black;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: none;
+    position: absolute;
+    bottom: 10px;
+    left: 10px; /* Align to bottom-left */
+  }
+  
+
+
+
 
 /* FILTER TAB STYLING */
 .filter-tab {

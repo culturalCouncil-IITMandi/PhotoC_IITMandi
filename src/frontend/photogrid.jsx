@@ -122,7 +122,7 @@ const PhotoGrid = () => {
             </button>
 
             <img
-              src={`${import.meta.env.VITE_SEAWEEDFS_URL}/${photo.fileId}`}
+              src={`${import.meta.env.VITE_SEAWEEDFS_URL_DOWNLOAD}/${photo.fileId}`}
               alt={photo.fileName}
               className="photo"
               loading="lazy"
@@ -144,7 +144,7 @@ const PhotoGrid = () => {
         <div className="modal">
           <div className="modal-content">
             <button className="close-button" onClick={() => setSelectedPhoto(null)}>&times;</button>
-            <img src={`${import.meta.env.VITE_SEAWEEDFS_URL}/${selectedPhoto.fileId}`} alt={selectedPhoto.fileName} className="modal-photo" />
+            <img src={`${import.meta.env.VITE_SEAWEEDFS_URL_DOWNLOAD}/${selectedPhoto.fileId}`} alt={selectedPhoto.fileName} className="modal-photo" />
             <p><strong>Uploader:</strong> {selectedPhoto.uploader}</p>
             <p><strong>Email:</strong> {selectedPhoto.uploaderEmail}</p>
             <p><strong>Uploaded on:</strong> {new Date(selectedPhoto.uploadedAt).toLocaleDateString()}</p>
