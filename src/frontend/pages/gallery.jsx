@@ -218,7 +218,7 @@ const Gallery = () => {
               <div className="modal-photo-container">
                 <img
                   src={`${import.meta.env.VITE_SEAWEEDFS_URL_DOWNLOAD}/${
-                    photo.fileId
+                    selectedPhoto.fileId
                   }`}
                   alt={selectedPhoto.fileName}
                   className="modal-photo"
