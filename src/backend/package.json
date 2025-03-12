@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Photo Gallery for IIT Mandi",
-  "main": "index.js",
+  "main": "server.js",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "node --watch --env-file=.env ./server.js",
     "start": "node --env-file=.env ./src/backend/server.js"
