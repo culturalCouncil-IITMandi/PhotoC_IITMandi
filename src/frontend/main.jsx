@@ -1,6 +1,12 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import "./index.css";
 import BelowHero from "./BelowHero";
 import Hero from "./Hero";
