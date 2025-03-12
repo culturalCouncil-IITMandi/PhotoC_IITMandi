@@ -11,10 +11,6 @@
     {
       "source": "/(.*)",
       "destination": "/"
-    },
-    {
-      "source": "/getimage/:path*",
-      "destination": "http://20.191.66.216:9333/:path*"
     }
   ]
 }
