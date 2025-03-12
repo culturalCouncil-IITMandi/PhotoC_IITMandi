@@ -174,7 +174,7 @@ const Gallery = () => {
             {filteredPhotos.map((photo) => (
               <div key={photo.fileId} className="photo-card">
                 <img
-                  src={`${import.meta.env.VITE_BACKEND_URL_DOWNLOAD}/${
+                  src={`${import.meta.env.VITE_SEAWEEDFS_URL_DOWNLOAD}/${
                     photo.fileId
                   }`}
                   alt={photo.fileName}
