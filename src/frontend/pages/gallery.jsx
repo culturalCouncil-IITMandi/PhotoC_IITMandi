@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import "./gallery.css";
+import { ErrorToast, SuccessToast } from "../components/Toast";
+import { toast } from "react-toastify";
 
 const Gallery = () => {
   const location = useLocation();
@@ -55,6 +57,7 @@ const Gallery = () => {
       setPhotos(data.files || []);
       setFilteredPhotos(filtered || []);
     } catch (error) {
+      toast(<ErrorToast message="Failed to fetch photos" />);
       console.error("Error fetching photos:", error);
       setPhotos([]);
       setFilteredPhotos([]);
@@ -79,7 +82,7 @@ const Gallery = () => {
   const handleLike = async (photoId) => {
     const storedUser = localStorage.getItem("user");
     if (!storedUser) {
-      alert("Please log in to like photos.");
+      toast(<ErrorToast message="Please login to like photos" />);
       return;
     }
 
@@ -107,6 +110,7 @@ const Gallery = () => {
         ),
       ]);
     } catch (error) {
+      toast(<ErrorToast message="Failed to like the photo" />);
       console.error("Error liking the photo:", error);
     }
   };
@@ -248,8 +252,8 @@ const Gallery = () => {
                       link.click();
                       window.URL.revokeObjectURL(url);
                     } catch (error) {
+                      toast(<ErrorToast message="Failed to download image" />);
                       console.error("Error downloading image:", error);
-                      alert("Failed to download image. Please try again.");
                     }
                   }}
                   style={{ cursor: "pointer" }}
@@ -299,6 +303,7 @@ const Gallery = () => {
                     link.click();
                     window.URL.revokeObjectURL(url);
                   } catch (error) {
+                    toast(<ErrorToast message="Failed to download image" />);
                     console.error("Error downloading image:", error);
                     alert("Failed to download image. Please try again.");
                   }
@@ -330,6 +335,9 @@ const Gallery = () => {
                           window.location.reload();
                         }
                       } catch (error) {
+                        toast(
+                          <ErrorToast message="Failed to disapprove image" />
+                        );
                         console.error("Error disapproving image:", error);
                       }
                     }}

@@ -7,6 +7,10 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
+import { ToastContainer, toast } from "react-toastify";
+import { customToastContainerStyle } from "./components/Toast";
+import "react-toastify/dist/ReactToastify.css";
+
 import "./index.css";
 import BelowHero from "./BelowHero";
 import Hero from "./Hero";
@@ -73,6 +77,7 @@ const App = () => {
           </div>
           <Footer />
         </div>
+        <ToastContainer theme="dark" toastStyle={customToastContainerStyle} />
       </div>
     </Router>
   );

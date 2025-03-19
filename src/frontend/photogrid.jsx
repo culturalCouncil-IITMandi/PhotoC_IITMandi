@@ -37,13 +37,16 @@ const PhotoGrid = () => {
 
   const fetchPhotos = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/approve`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-KEY": import.meta.env.VITE_X_API_KEY,
-        },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/approve`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-KEY": import.meta.env.VITE_X_API_KEY,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -60,13 +63,16 @@ const PhotoGrid = () => {
     if (!isAdmin) return;
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/approve/${fileId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-KEY": import.meta.env.VITE_X_API_KEY,
-        },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/approve/${fileId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-KEY": import.meta.env.VITE_X_API_KEY,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -82,13 +88,16 @@ const PhotoGrid = () => {
     if (!isAdmin) return;
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/approve/${fileId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-KEY": import.meta.env.VITE_X_API_KEY,
-        },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/approve/${fileId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-KEY": import.meta.env.VITE_X_API_KEY,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -117,22 +126,33 @@ const PhotoGrid = () => {
       <div className="photo-grid">
         {photos.map((photo) => (
           <div key={photo.fileId} className="photo-card">
-            <button className="view-button" onClick={() => setSelectedPhoto(photo)}>
+            <button
+              className="view-button"
+              onClick={() => setSelectedPhoto(photo)}
+            >
               <img className="icon" src={eye} alt="View" />
             </button>
 
             <img
-              src={`${import.meta.env.VITE_SEAWEEDFS_URL_DOWNLOAD}/${photo.fileId}`}
+              src={`${import.meta.env.VITE_SEAWEEDFS_URL_DOWNLOAD}/${
+                photo.fileId
+              }`}
               alt={photo.fileName}
               className="photo"
               loading="lazy"
             />
 
             <div className="photo-actions">
-              <button onClick={() => handleApprove(photo.fileId)} disabled={!isAdmin}>
+              <button
+                onClick={() => handleApprove(photo.fileId)}
+                disabled={!isAdmin}
+              >
                 <img className="icon" src={tick} alt="Approve" />
               </button>
-              <button onClick={() => handleReject(photo.fileId)} disabled={!isAdmin}>
+              <button
+                onClick={() => handleReject(photo.fileId)}
+                disabled={!isAdmin}
+              >
                 <img className="icon" src={cross} alt="Reject" />
               </button>
             </div>
@@ -143,11 +163,29 @@ const PhotoGrid = () => {
       {selectedPhoto && (
         <div className="modal">
           <div className="modal-content">
-            <button className="close-button" onClick={() => setSelectedPhoto(null)}>&times;</button>
-            <img src={`${import.meta.env.VITE_SEAWEEDFS_URL_DOWNLOAD}/${selectedPhoto.fileId}`} alt={selectedPhoto.fileName} className="modal-photo" />
-            <p><strong>Uploader:</strong> {selectedPhoto.uploader}</p>
-            <p><strong>Email:</strong> {selectedPhoto.uploaderEmail}</p>
-            <p><strong>Uploaded on:</strong> {new Date(selectedPhoto.uploadedAt).toLocaleDateString()}</p>
+            <button
+              className="close-button"
+              onClick={() => setSelectedPhoto(null)}
+            >
+              &times;
+            </button>
+            <img
+              src={`${import.meta.env.VITE_SEAWEEDFS_URL_DOWNLOAD}/${
+                selectedPhoto.fileId
+              }`}
+              alt={selectedPhoto.fileName}
+              className="modal-photo"
+            />
+            <p>
+              <strong>Uploader:</strong> {selectedPhoto.uploader}
+            </p>
+            <p>
+              <strong>Email:</strong> {selectedPhoto.uploaderEmail}
+            </p>
+            <p>
+              <strong>Uploaded on:</strong>{" "}
+              {new Date(selectedPhoto.uploadedAt).toLocaleDateString()}
+            </p>
             <p className={selectedPhoto.approval ? "approved" : "pending"}>
               {selectedPhoto.approval ? "Approved" : "Pending"}
             </p>
